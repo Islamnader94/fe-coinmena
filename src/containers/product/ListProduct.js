@@ -1,14 +1,33 @@
 import React , { Component } from 'react';
-import ProductsList from '../../components/product/ListProduct'
+import ProductsList from '../../components/product/ListProduct';
 import {connect} from 'react-redux';
+import {history} from '../../components/RouterComponent';
+import {fetchProducts} from '../../actions/product.actions';
 
 class ListProduct extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            listProducts: []
+        }
+    }
+
+    componentDidMount() {
+        let sessionProducts = sessionStorage.getItem('products') || ''
+        let productsParse = ''
+        if (sessionProducts !== '') {
+            productsParse = JSON.parse(sessionProducts);
+        }
+        if (productsParse !== '') {
+            this.setState({listProducts: productsParse})
+        } else {
+            this.props.onFetch();
+            this.setState({listProducts: this.props.products})
+        }
     }
 
     handleEditProduct(product) {
-        this.props.history.push({
+        history.push({
             pathname: `/edit-products/${product._id}`,
             state: {
                 product: product,
@@ -35,7 +54,7 @@ class ListProduct extends Component {
                     </thead>
                     <tbody>
                         {
-                            this.props.products.map(product => {
+                            this.state.listProducts.map(product => {
                                 return (
                                     <ProductsList 
                                     key={product._id} 
@@ -59,4 +78,12 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, null)(ListProduct);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onFetch: () => {
+            dispatch(fetchProducts());
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListProduct);

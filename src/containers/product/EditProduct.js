@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import './EditProduct.css';
 import {editProduct} from '../../actions/product.actions';
 import { connect } from 'react-redux';
+import './EditProduct.css'
 
 
 class EditProduct extends Component {
@@ -9,14 +9,15 @@ class EditProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            id: "",
+            _id: "",
             product_name: "",
             weight: "",
             availability: "",
             price_range: "",
             price_tier: "",
             unit_cost: "",
-            url: ""
+            url: "",
+            isEditable: false
         }
 
     }
@@ -25,16 +26,16 @@ class EditProduct extends Component {
         const props = this.props;
         if (props.location && props.location.state) {
             const product = props.location.state.product;
-            
             this.setState({
-                id: product._id,
+                _id: product._id,
                 product_name: product.product_name,
                 weight: product.weight,
                 availability: product.availability,
                 price_range: product.price_range,
                 price_tier: product.price_tier,
                 unit_cost: product.unit_cost,
-                url: product.url
+                url: product.url,
+                isEditable: product.isEditable
             })
         }
     }
@@ -50,37 +51,92 @@ class EditProduct extends Component {
         })
     }
 
+    onRadioChange(e) {
+        this.setState({
+            price_tier: e.target.value
+        });
+      }
+
+    onCheckBoxChange(e) {
+        this.setState({isEditable: !this.state.isEditable})
+    }
+
     render() {
         return (
             <div className="edit-product">
                 <form onSubmit={this.handleSubmit.bind(this)} >
                     <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.product_name} onChange={this.handleOnValueChange.bind(this)} name="product_name" placeholder="Enter product name" />
+                        <input type="text" className="form-control" value={this.state.product_name} onChange={this.handleOnValueChange.bind(this)} name="product_name" placeholder="Enter product name" required />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.weight} onChange={this.handleOnValueChange.bind(this)} name="weight" placeholder="Enter weight" />
+                        <input type="text" className="form-control" value={this.state.weight} onChange={this.handleOnValueChange.bind(this)} name="weight" placeholder="Enter weight" required />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.availability} onChange={this.handleOnValueChange.bind(this)} name="availability" placeholder="Enter availability" />
+                        <input type="number" className="form-control" value={this.state.availability} onChange={this.handleOnValueChange.bind(this)} name="availability" placeholder="Enter availability" />
+                    </div>
+                    <div className="form-group switch-field">
+                        <ul>
+                            <li>
+                            <label>
+                                <input
+                                type="radio"
+                                value="budget"
+                                checked={this.state.price_tier === "budget"}
+                                onChange={this.onRadioChange.bind(this)}
+                                />
+                                <span>Budget</span>
+                            </label>
+                            </li>
+
+                            <li>
+                            <label>
+                                <input
+                                type="radio"
+                                value="premium"
+                                checked={this.state.price_tier === "premium"}
+                                onChange={this.onRadioChange.bind(this)}
+                                />
+                                <span>Premier</span>
+                            </label>
+                            </li>
+                        </ul>
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.price_tier} onChange={this.handleOnValueChange.bind(this)} name="price_tier" placeholder="Enter price tier" />
-                    </div>
-                    <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.price_range} onChange={this.handleOnValueChange.bind(this)} name="price_range" placeholder="Enter price range" />
+                    {this.state.price_tier ===  'budget' ?(
+                    <select  className="form-control" value={this.state.price_range} onChange={this.handleOnValueChange.bind(this)} name="price_range" required>
+                        <option value="$1-10">$1-10</option>
+                        <option value="$11-20">$11-20</option>
+                        <option value="$20-50">$20-50</option>
+                    </select>
+                        ) : (
+                        <select  className="form-control" value={this.state.price_range} onChange={this.handleOnValueChange.bind(this)} name="price_range" required>
+                            <option value="$50-99">$50-99</option>
+                            <option value="$100-199">$100-199</option>
+                            <option value="$200+">$200+</option>
+                        </select>
+                    )}
                     </div>
                     <div className="form-group">
                         <input type="text" className="form-control" value={this.state.unit_cost} onChange={this.handleOnValueChange.bind(this)} name="unit_cost" placeholder="Enter unit cost" />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" value={this.state.url} onChange={this.handleOnValueChange.bind(this)} name="url" placeholder="Enter unit url" />
+                        <input type="text" className="form-control" value={this.state.url} onChange={this.handleOnValueChange.bind(this)} name="url" placeholder="Enter unit url" required />
+                    </div>
+                    <div>
+                        <label>
+                        Is Editable:
+                        <input
+                            name="isEditable"
+                            type="checkbox"
+                            className="check-box"
+                            checked={this.state.isEditable}
+                            value={this.state.isEditable}
+                            onChange={this.onCheckBoxChange.bind(this)} />
+                        </label>
                     </div>
                     <div className="form-group">
                         <button type="submit" className="btn btn-primary">
                             Submit
-                        </button>
-                        <button type="button" className="btn btn-danger">
-                            Cancel
                         </button>
                     </div>
                 </form>

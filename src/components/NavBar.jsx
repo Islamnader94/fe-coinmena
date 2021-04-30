@@ -13,7 +13,7 @@ const NavBar = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" style={style}>
-                        Teacher Application Directory
+                        CoinMena Products
                     </Typography>
                 </Toolbar>
             </AppBar>

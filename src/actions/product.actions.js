@@ -4,6 +4,7 @@ import {
 } from './types';
 
 import products from '../data/productData.json';
+import {history} from '../components/RouterComponent';
 
 export const fetchProductsSuccess = (data) => {
     return {
@@ -19,7 +20,6 @@ export const fetchProducts = () => {
 }
 
 export const EditProductSuccess = (data) =>  {
-    debugger;
     return {
         type: EDIT_PRODUCT_SUCCESS,
         payload: data,
@@ -40,11 +40,6 @@ export const editProduct = (product) => {
 
     return (dispatch) => {
         dispatch(EditProductSuccess(data))
-        this.props.location.history.push({
-            pathname: '/',
-            state: {
-                product: product,
-            }
-        });
+        history.push({pathname: '/'});
     }
 }
